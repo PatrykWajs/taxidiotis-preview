@@ -102,10 +102,14 @@
 		}
 		return cache[url];
 	}
-	var SI = null, SD = null, CI = null, CD = null, OI = null, OD = [];
+	var SI = null, SD = null, CI = null, CD = null, OI = null, OD = [], OCHK = '';
+	function chk() { // «έλεγχος 20/11/2026»: every price shows the date of the feed check (project rule)
+		var m = /^(\d{4})-(\d{2})-(\d{2})/.exec(OCHK);
+		return m ? ' · έλεγχος ' + (+m[3]) + '/' + (+m[2]) + '/' + m[1] : '';
+	}
 	function searchIndex() {
 		if (SI) { return Promise.resolve(); }
-		var offers = C.offers ? load(C.offers).then(function (d) { return d.offers || []; }, function () { return []; }) : Promise.resolve([]);
+		var offers = C.offers ? load(C.offers).then(function (d) { OCHK = d.checked || ''; return d.offers || []; }, function () { return []; }) : Promise.resolve([]);
 		return Promise.all([load(C.search), offers]).then(function (r) {
 			SD = r[0]; OD = r[1];
 			SI = new Index(SD.map(function (p) {
@@ -197,7 +201,7 @@
 			slist.appendChild(el('li', { 'class': 'txa-group' }, 'Προσφορές συνεργατών'));
 			offs.forEach(function (o) {
 				var li = el('li');
-				li.innerHTML = '<a href="' + esc(href(o.u)) + '"><span class="txa-k">' + esc(o.k) + '</span><span class="txa-t">' + mark(o.t, q) + '</span><span class="txa-d">' + mark(o.d, q) + '</span></a>';
+				li.innerHTML = '<a href="' + esc(href(o.u)) + '"><span class="txa-k">' + esc(o.k) + '</span><span class="txa-t">' + mark(o.t, q) + '</span><span class="txa-d">' + mark(o.d, q) + esc(chk()) + '</span></a>';
 				slist.appendChild(li);
 			});
 		}
@@ -287,7 +291,7 @@
 		var offs = /προσφορ|τιμ|κοστ|φθιν|ξενοδοχ|κλισ|διανικτ|πακετ|διαμον/.test(toks(q).join(' '))
 			? findOffers(q.replace(/προσφορ\S*|τιμ\S*|κόστ\S*|κοστ\S*|φθην\S*|οικονομ\S*|ξενοδοχ\S*|πακέτ\S*|πακετ\S*|διακοπ\S*|ταξίδ\S*|ταξιδ\S*|διαμον\S*|πόσο|θέλω|ψάχνω/gi, ''), 3, cheap) : [];
 		var lead = offs.length ? '<p class="txa-q">Προσφορές συνεργατών τώρα' + (cheap ? ', από τη χαμηλότερη τιμή' : '') + '</p><ul>' + offs.map(function (o) {
-			return '<li><a href="' + esc(href(o.u)) + '">' + esc(o.t) + '</a>: ' + esc(o.d) + '</li>'; }).join('') + '</ul>' : '';
+			return '<li><a href="' + esc(href(o.u)) + '">' + esc(o.t) + '</a>: ' + esc(o.d + chk()) + '</li>'; }).join('') + '</ul><p class="txa-src">Τελική τιμή και όροι στη σελίδα του συνεργάτη.</p>' : '';
 		var need = tq.length <= 2 ? 1 : tq.length === 3 ? 0.66 : 0.6;  // every word of a short question must be found
 		if (!top || top.cov < need || top.s < 4) {
 			var pages = tq.length ? SI.search(q).filter(function (r) { return r.cov >= 0.99; }).slice(0, 3).map(function (r) { return SD[r.d]; }) : [];
