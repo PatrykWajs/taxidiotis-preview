@@ -42,6 +42,7 @@
 	('και να το τα τη την της του των τον στο στη στην στον στα στις στους σε με για απο από ειναι είναι ενα ένα μια μία ' +
 	 'ο η οι τι ποιο ποια ποιος ποιες πως πώς που πού ποτε πότε θα δεν μη μην αν ή η κι ως ειναι εχει έχει εχω έχω μου σας ' +
 	 'μας τους ειμαι είμαι θελω θέλω μπορω μπορώ μπορει μπορεί ποσο πόσο κανει κάνει υπαρχει υπάρχει ολα όλα λιγο λίγο ' +
+	 'βάλω βάζω πάρω παίρνω φέρω κλείσω δω δούμε πάω πάμε πας πάει πήγαινα πηγαίνω ταξιδέψω επισκεφθώ επισκεφτώ κάνω κάνουμε έχουμε είμαστε μας μου καλά καλή ' +
 	 'the and for to of in a an is what how when where').split(' ').forEach(function (w) { STOP[canon(w)] = 1; });
 	function stem(w) { return w.length > 4 ? w.slice(0, Math.max(4, w.length - 2)) : w; }
 
@@ -110,11 +111,14 @@
 			SI = new Index(SD.map(function (p) {
 				return [[p.t, 4], [p.h1, 3], [p.k || '', 2], [p.d || '', 2], [(p.hs || []).join(' '), 1], [p.l || '', 3]];
 			}));
-			OI = new Index(OD.map(function (o) { return [[o.t, 3], [o.d || '', 2], [o.l || '', 2]]; }));
+			OI = new Index(OD.map(function (o) { return [[o.t, 3], [o.d || '', 2], [o.l || '', 2], [o.g || '', 1]]; }));
 		});
 	}
-	function findOffers(q, max) {
-		return OI ? OI.search(q).filter(function (r) { return r.cov >= 0.99; }).slice(0, max).map(function (r) { return OD[r.d]; }) : [];
+	function findOffers(q, max, cheap) {  // every word must match; «cheap» questions get the lowest prices first
+		if (!OI) { return []; }
+		var hits = OI.search(q).filter(function (r) { return r.cov >= 0.99; }).slice(0, cheap ? 60 : max).map(function (r) { return OD[r.d]; });
+		if (cheap) { hits.sort(function (a, b) { return (a.pr || 1e9) - (b.pr || 1e9); }); }
+		return hits.slice(0, max);
 	}
 	function chatIndex() {
 		return CI ? Promise.resolve() : load(C.chat).then(function (d) {
@@ -269,14 +273,25 @@
 			say('<p>Μπορείτε να μας γράψετε από τη <a href="' + esc(href('/epikoinonia/')) + '">σελίδα επικοινωνίας</a>.</p>' + extra); return;
 		}
 		var here = location.pathname.replace(HOME.replace(/^https?:\/\/[^/]+/, ''), '') || '/';
-		var res = CI.search(q).slice(0, 40).map(function (r) {
+		// question words that carry meaning but are stop words: «πότε» asks for the season, «πόσες μέρες» for the length
+		var qq = q + (has(q, ['πότε', 'ποτε']) ? ' εποχή' : '') + (has(q, ['μέρες', 'ημέρες', 'διανυκτερεύσεις']) && has(q, ['πόσες', 'ποσες']) ? ' ημέρες' : '');
+		var qtok = toks(qq).filter(function (w) { return !STOP[w]; });
+		var res = CI.search(qq).slice(0, 60).map(function (r) {
 			var c = CD.chunks[r.d], pg = CD.pages[c.n] || {};
-			return { c: c, pg: pg, s: r.s * (pg.u === here ? 1.25 : 1) * (c.q ? 1.15 : 1), cov: r.cov };
+			// a page whose title holds the question's words is the better source (family question -> the family page)
+			var tt = toks(pg.t || ''), tc = qtok.length ? qtok.filter(function (w) { var st = stem(w); return tt.some(function (x) { return x.lastIndexOf(st, 0) === 0; }); }).length / qtok.length : 0;
+			return { c: c, pg: pg, s: r.s * (pg.u === here ? 1.25 : 1) * (c.q ? 1.15 : 1) * (1 + 0.6 * tc), cov: r.cov };
 		}).sort(function (a, b) { return b.s - a.s; });
 		var top = res[0];
+		var cheap = /φθιν|οικονομ|χαμηλ/.test(toks(q).join(' '));
+		var offs = /προσφορ|τιμ|κοστ|φθιν|ξενοδοχ|κλισ|διανικτ|πακετ|διαμον/.test(toks(q).join(' '))
+			? findOffers(q.replace(/προσφορ\S*|τιμ\S*|κόστ\S*|κοστ\S*|φθην\S*|οικονομ\S*|ξενοδοχ\S*|πακέτ\S*|πακετ\S*|διακοπ\S*|ταξίδ\S*|ταξιδ\S*|διαμον\S*|πόσο|θέλω|ψάχνω/gi, ''), 3, cheap) : [];
+		var lead = offs.length ? '<p class="txa-q">Προσφορές συνεργατών τώρα' + (cheap ? ', από τη χαμηλότερη τιμή' : '') + '</p><ul>' + offs.map(function (o) {
+			return '<li><a href="' + esc(href(o.u)) + '">' + esc(o.t) + '</a>: ' + esc(o.d) + '</li>'; }).join('') + '</ul>' : '';
 		var need = tq.length <= 2 ? 1 : tq.length === 3 ? 0.66 : 0.6;  // every word of a short question must be found
 		if (!top || top.cov < need || top.s < 4) {
-			var pages = tq.length ? findPages(q, 3) : [];
+			var pages = tq.length ? SI.search(q).filter(function (r) { return r.cov >= 0.99; }).slice(0, 3).map(function (r) { return SD[r.d]; }) : [];
+			if (lead) { say(lead + '<p class="txa-src">Δείτε και τις σελίδες μας:</p><ul>' + (tq.length ? findPages(q, 3) : []).map(function (p) { return '<li><a href="' + esc(href(p.u)) + '">' + esc(p.t) + '</a></li>'; }).join('') + '</ul>' + extra); return; }
 			say('<p>Δεν βρήκα σαφή απάντηση σε αυτό στις σελίδες μας.' + (pages.length ? ' Ίσως σας βοηθήσουν:' : ' Δοκιμάστε με έναν προορισμό, μια γιορτή ή ένα είδος ταξιδιού.') + '</p>' +
 				(pages.length ? '<ul>' + pages.map(function (p) { return '<li><a href="' + esc(href(p.u)) + '">' + esc(p.t) + '</a></li>'; }).join('') + '</ul>' : '') +
 				'<p>Για κάτι άλλο, γράψτε μας από τη <a href="' + esc(href('/epikoinonia/')) + '">σελίδα επικοινωνίας</a>.</p>' + extra);
@@ -285,9 +300,6 @@
 		var body = top.c.q ? top.c.x : sentences(top.c.x, q);
 		var more = [], seenU = {}; seenU[top.pg.u] = 1;
 		res.slice(1).forEach(function (r) { if (more.length < 2 && !seenU[r.pg.u] && r.cov >= 0.5 && r.s > top.s * 0.55) { seenU[r.pg.u] = 1; more.push(r.pg); } });
-		var offs = /προσφορ|τιμ|κοστ|φθιν|ξενοδοχ|κλισ|διανικτ/.test(toks(q).join(' ')) ? findOffers(q.replace(/προσφορ\S*|τιμ\S*|κόστ\S*|φθην\S*|ξενοδοχ\S*/gi, ''), 3) : [];
-		var lead = offs.length ? '<p class="txa-q">Προσφορές συνεργατών τώρα</p><ul>' + offs.map(function (o) {
-			return '<li><a href="' + esc(href(o.u)) + '">' + esc(o.t) + '</a>: ' + esc(o.d) + '</li>'; }).join('') + '</ul><p class="txa-src">Και από τους οδηγούς μας:</p>' : '';
 		say(lead + (top.c.q ? '<p class="txa-q">' + esc(top.c.q) + '</p>' : '') + '<p>' + mark(body, q) + '</p>' +
 			'<p class="txa-src">Πηγή: <a href="' + esc(href(top.pg.u)) + '">' + esc(top.pg.t) + '</a></p>' +
 			(more.length ? '<p class="txa-src">Δείτε επίσης: ' + more.map(function (p) { return '<a href="' + esc(href(p.u)) + '">' + esc(p.t) + '</a>'; }).join(' · ') + '</p>' : '') + extra);
