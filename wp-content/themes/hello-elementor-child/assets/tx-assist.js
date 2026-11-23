@@ -343,8 +343,11 @@
 					var x = src[n]; return x ? '<a class="txa-cite" href="' + esc(href(x.url)) + '" title="' + esc(x.title) + '">' + n + '</a>' : '';
 				});
 				var used = (j.sources || []).filter(function (x) { return new RegExp('\\[' + x.n + '\\]').test(j.answer); });
-				say('<p>' + html + '</p>' + (used.length ? '<p class="txa-src">Πηγές: ' + used.map(function (x) {
-					return '<a href="' + esc(href(x.url)) + '">' + x.n + '. ' + esc(x.title) + '</a>'; }).join(' · ') + '</p>' : '') + extra);
+				// one entry per page: several passages of one page read «1, 3. Title» (2026-11-23)
+				var byUrl = [], seenUrl = {};
+				used.forEach(function (x) { if (seenUrl[x.url]) { seenUrl[x.url].ns.push(x.n); } else { seenUrl[x.url] = { x: x, ns: [x.n] }; byUrl.push(seenUrl[x.url]); } });
+				say('<p>' + html + '</p>' + (byUrl.length ? '<p class="txa-src">Πηγές: ' + byUrl.map(function (g) {
+					return '<a href="' + esc(href(g.x.url)) + '">' + g.ns.join(', ') + '. ' + esc(g.x.title) + '</a>'; }).join(' · ') + '</p>' : '') + extra);
 				HIST.push({ q: q, a: j.answer.slice(0, 500) });
 				if (HIST.length > 4) { HIST.shift(); }
 			})
