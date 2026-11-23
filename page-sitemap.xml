@@ -2,7 +2,7 @@
 <urlset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd http://www.google.com/schemas/sitemap-image/1.1 http://www.google.com/schemas/sitemap-image/1.1/sitemap-image.xsd" xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 	<url>
 		<loc>https://patrykwajs.github.io/taxidiotis-preview/</loc>
-		<lastmod>2026-11-19T22:18:02+00:00</lastmod>
+		<lastmod>2026-11-23T15:15:09+00:00</lastmod>
 	</url>
 	<url>
 		<loc>https://patrykwajs.github.io/taxidiotis-preview/eidi-taxidion/</loc>
@@ -45,11 +45,11 @@
 		<lastmod>2026-11-23T14:40:57+00:00</lastmod>
 	</url>
 	<url>
-		<loc>https://patrykwajs.github.io/taxidiotis-preview/paketa-diakopon-santorini/</loc>
+		<loc>https://patrykwajs.github.io/taxidiotis-preview/paketa-diakopon-italia/</loc>
 		<lastmod>2026-11-23T14:28:03+00:00</lastmod>
 	</url>
 	<url>
-		<loc>https://patrykwajs.github.io/taxidiotis-preview/paketa-diakopon-italia/</loc>
+		<loc>https://patrykwajs.github.io/taxidiotis-preview/paketa-diakopon-santorini/</loc>
 		<lastmod>2026-11-23T14:28:03+00:00</lastmod>
 	</url>
 	<url>
@@ -61,12 +61,16 @@
 		<lastmod>2026-11-23T14:28:02+00:00</lastmod>
 	</url>
 	<url>
+		<loc>https://patrykwajs.github.io/taxidiotis-preview/paketa-diakopon-thessaloniki/</loc>
+		<lastmod>2026-11-23T14:28:01+00:00</lastmod>
+	</url>
+	<url>
 		<loc>https://patrykwajs.github.io/taxidiotis-preview/paketa-diakopon-voreia-ellada/</loc>
 		<lastmod>2026-11-23T14:28:01+00:00</lastmod>
 	</url>
 	<url>
-		<loc>https://patrykwajs.github.io/taxidiotis-preview/paketa-diakopon-thessaloniki/</loc>
-		<lastmod>2026-11-23T14:28:01+00:00</lastmod>
+		<loc>https://patrykwajs.github.io/taxidiotis-preview/paketa-diakopon-dodekanisa/</loc>
+		<lastmod>2026-11-23T14:28:00+00:00</lastmod>
 	</url>
 	<url>
 		<loc>https://patrykwajs.github.io/taxidiotis-preview/paketa-diakopon-kyklades/</loc>
@@ -74,10 +78,6 @@
 	</url>
 	<url>
 		<loc>https://patrykwajs.github.io/taxidiotis-preview/paketa-diakopon-rodos/</loc>
-		<lastmod>2026-11-23T14:28:00+00:00</lastmod>
-	</url>
-	<url>
-		<loc>https://patrykwajs.github.io/taxidiotis-preview/paketa-diakopon-dodekanisa/</loc>
 		<lastmod>2026-11-23T14:28:00+00:00</lastmod>
 	</url>
 	<url>
@@ -137,11 +137,11 @@
 		<lastmod>2026-11-23T14:19:49+00:00</lastmod>
 	</url>
 	<url>
-		<loc>https://patrykwajs.github.io/taxidiotis-preview/diakopes-ellinika-nisia/</loc>
+		<loc>https://patrykwajs.github.io/taxidiotis-preview/taxidia-evropi/</loc>
 		<lastmod>2026-11-23T14:19:48+00:00</lastmod>
 	</url>
 	<url>
-		<loc>https://patrykwajs.github.io/taxidiotis-preview/taxidia-evropi/</loc>
+		<loc>https://patrykwajs.github.io/taxidiotis-preview/diakopes-ellinika-nisia/</loc>
 		<lastmod>2026-11-23T14:19:48+00:00</lastmod>
 	</url>
 	<url>
@@ -173,6 +173,10 @@
 		<lastmod>2026-11-23T09:42:27+00:00</lastmod>
 	</url>
 	<url>
+		<loc>https://patrykwajs.github.io/taxidiotis-preview/city-break/</loc>
+		<lastmod>2026-11-23T09:42:26+00:00</lastmod>
+	</url>
+	<url>
 		<loc>https://patrykwajs.github.io/taxidiotis-preview/gastronomika-taxidia/</loc>
 		<lastmod>2026-11-23T09:42:26+00:00</lastmod>
 	</url>
@@ -181,15 +185,11 @@
 		<lastmod>2026-11-23T09:42:26+00:00</lastmod>
 	</url>
 	<url>
-		<loc>https://patrykwajs.github.io/taxidiotis-preview/city-break/</loc>
-		<lastmod>2026-11-23T09:42:26+00:00</lastmod>
-	</url>
-	<url>
-		<loc>https://patrykwajs.github.io/taxidiotis-preview/diakopes-gia-zevgaria/</loc>
+		<loc>https://patrykwajs.github.io/taxidiotis-preview/organomena-taxidia/</loc>
 		<lastmod>2026-11-23T09:42:25+00:00</lastmod>
 	</url>
 	<url>
-		<loc>https://patrykwajs.github.io/taxidiotis-preview/organomena-taxidia/</loc>
+		<loc>https://patrykwajs.github.io/taxidiotis-preview/diakopes-gia-zevgaria/</loc>
 		<lastmod>2026-11-23T09:42:25+00:00</lastmod>
 	</url>
 	<url>
@@ -325,15 +325,15 @@
 		<lastmod>2026-11-23T09:42:06+00:00</lastmod>
 	</url>
 	<url>
-		<loc>https://patrykwajs.github.io/taxidiotis-preview/krouazieres-fiordia/</loc>
-		<lastmod>2026-11-23T09:42:05+00:00</lastmod>
-	</url>
-	<url>
 		<loc>https://patrykwajs.github.io/taxidiotis-preview/krouazieres-mesogeios/</loc>
 		<lastmod>2026-11-23T09:42:05+00:00</lastmod>
 	</url>
 	<url>
 		<loc>https://patrykwajs.github.io/taxidiotis-preview/krouazieres-potamoploia/</loc>
+		<lastmod>2026-11-23T09:42:05+00:00</lastmod>
+	</url>
+	<url>
+		<loc>https://patrykwajs.github.io/taxidiotis-preview/krouazieres-fiordia/</loc>
 		<lastmod>2026-11-23T09:42:05+00:00</lastmod>
 	</url>
 	<url>
@@ -353,15 +353,15 @@
 		<lastmod>2026-11-23T09:42:03+00:00</lastmod>
 	</url>
 	<url>
+		<loc>https://patrykwajs.github.io/taxidiotis-preview/paketa-diakopon-latiniki-ameriki/</loc>
+		<lastmod>2026-11-23T09:42:02+00:00</lastmod>
+	</url>
+	<url>
 		<loc>https://patrykwajs.github.io/taxidiotis-preview/paketa-diakopon-india-nepal/</loc>
 		<lastmod>2026-11-23T09:42:02+00:00</lastmod>
 	</url>
 	<url>
 		<loc>https://patrykwajs.github.io/taxidiotis-preview/paketa-diakopon-ipa-kanadas/</loc>
-		<lastmod>2026-11-23T09:42:02+00:00</lastmod>
-	</url>
-	<url>
-		<loc>https://patrykwajs.github.io/taxidiotis-preview/paketa-diakopon-latiniki-ameriki/</loc>
 		<lastmod>2026-11-23T09:42:02+00:00</lastmod>
 	</url>
 	<url>
@@ -385,15 +385,15 @@
 		<lastmod>2026-11-23T09:42:00+00:00</lastmod>
 	</url>
 	<url>
-		<loc>https://patrykwajs.github.io/taxidiotis-preview/paketa-diakopon-kina/</loc>
-		<lastmod>2026-11-23T09:41:59+00:00</lastmod>
-	</url>
-	<url>
 		<loc>https://patrykwajs.github.io/taxidiotis-preview/paketa-diakopon-vietnam/</loc>
 		<lastmod>2026-11-23T09:41:59+00:00</lastmod>
 	</url>
 	<url>
 		<loc>https://patrykwajs.github.io/taxidiotis-preview/paketa-diakopon-kafkasos-kentriki-asia/</loc>
+		<lastmod>2026-11-23T09:41:59+00:00</lastmod>
+	</url>
+	<url>
+		<loc>https://patrykwajs.github.io/taxidiotis-preview/paketa-diakopon-kina/</loc>
 		<lastmod>2026-11-23T09:41:59+00:00</lastmod>
 	</url>
 	<url>
@@ -417,11 +417,11 @@
 		<lastmod>2026-11-23T09:41:57+00:00</lastmod>
 	</url>
 	<url>
-		<loc>https://patrykwajs.github.io/taxidiotis-preview/paketa-diakopon-aigyptos/</loc>
+		<loc>https://patrykwajs.github.io/taxidiotis-preview/paketa-diakopon-ntoumpai/</loc>
 		<lastmod>2026-11-23T09:41:56+00:00</lastmod>
 	</url>
 	<url>
-		<loc>https://patrykwajs.github.io/taxidiotis-preview/paketa-diakopon-ntoumpai/</loc>
+		<loc>https://patrykwajs.github.io/taxidiotis-preview/paketa-diakopon-aigyptos/</loc>
 		<lastmod>2026-11-23T09:41:56+00:00</lastmod>
 	</url>
 	<url>
@@ -457,11 +457,11 @@
 		<lastmod>2026-11-23T09:41:49+00:00</lastmod>
 	</url>
 	<url>
-		<loc>https://patrykwajs.github.io/taxidiotis-preview/paketa-diakopon-laponia/</loc>
+		<loc>https://patrykwajs.github.io/taxidiotis-preview/paketa-diakopon-norvigia-skandinavia/</loc>
 		<lastmod>2026-11-23T09:41:48+00:00</lastmod>
 	</url>
 	<url>
-		<loc>https://patrykwajs.github.io/taxidiotis-preview/paketa-diakopon-norvigia-skandinavia/</loc>
+		<loc>https://patrykwajs.github.io/taxidiotis-preview/paketa-diakopon-laponia/</loc>
 		<lastmod>2026-11-23T09:41:48+00:00</lastmod>
 	</url>
 	<url>
@@ -481,11 +481,11 @@
 		<lastmod>2026-11-23T09:41:46+00:00</lastmod>
 	</url>
 	<url>
-		<loc>https://patrykwajs.github.io/taxidiotis-preview/paketa-diakopon-skotia/</loc>
+		<loc>https://patrykwajs.github.io/taxidiotis-preview/paketa-diakopon-amsterdam/</loc>
 		<lastmod>2026-11-23T09:41:45+00:00</lastmod>
 	</url>
 	<url>
-		<loc>https://patrykwajs.github.io/taxidiotis-preview/paketa-diakopon-amsterdam/</loc>
+		<loc>https://patrykwajs.github.io/taxidiotis-preview/paketa-diakopon-skotia/</loc>
 		<lastmod>2026-11-23T09:41:45+00:00</lastmod>
 	</url>
 	<url>
@@ -525,10 +525,6 @@
 		<lastmod>2026-11-23T09:41:40+00:00</lastmod>
 	</url>
 	<url>
-		<loc>https://patrykwajs.github.io/taxidiotis-preview/triimeres-ekdromes/</loc>
-		<lastmod>2026-11-23T08:42:20+00:00</lastmod>
-	</url>
-	<url>
 		<loc>https://patrykwajs.github.io/taxidiotis-preview/diakopes-ski/</loc>
 		<lastmod>2026-11-23T08:42:20+00:00</lastmod>
 	</url>
@@ -537,11 +533,15 @@
 		<lastmod>2026-11-23T08:42:20+00:00</lastmod>
 	</url>
 	<url>
-		<loc>https://patrykwajs.github.io/taxidiotis-preview/taxidi-melitos/</loc>
-		<lastmod>2026-11-23T08:42:19+00:00</lastmod>
+		<loc>https://patrykwajs.github.io/taxidiotis-preview/triimeres-ekdromes/</loc>
+		<lastmod>2026-11-23T08:42:20+00:00</lastmod>
 	</url>
 	<url>
 		<loc>https://patrykwajs.github.io/taxidiotis-preview/foititika-taxidia/</loc>
+		<lastmod>2026-11-23T08:42:19+00:00</lastmod>
+	</url>
+	<url>
+		<loc>https://patrykwajs.github.io/taxidiotis-preview/taxidi-melitos/</loc>
 		<lastmod>2026-11-23T08:42:19+00:00</lastmod>
 	</url>
 	<url>
@@ -617,11 +617,11 @@
 		<lastmod>2026-11-19T23:12:06+00:00</lastmod>
 	</url>
 	<url>
-		<loc>https://patrykwajs.github.io/taxidiotis-preview/ekaa-ti-einai/</loc>
+		<loc>https://patrykwajs.github.io/taxidiotis-preview/argies-2027/</loc>
 		<lastmod>2026-11-19T23:12:05+00:00</lastmod>
 	</url>
 	<url>
-		<loc>https://patrykwajs.github.io/taxidiotis-preview/argies-2027/</loc>
+		<loc>https://patrykwajs.github.io/taxidiotis-preview/ekaa-ti-einai/</loc>
 		<lastmod>2026-11-19T23:12:05+00:00</lastmod>
 	</url>
 	<url>
@@ -649,11 +649,11 @@
 		<lastmod>2026-11-19T22:29:39+00:00</lastmod>
 	</url>
 	<url>
-		<loc>https://patrykwajs.github.io/taxidiotis-preview/pos-epilegoume-prosfores/</loc>
+		<loc>https://patrykwajs.github.io/taxidiotis-preview/hey-ai-taxidiotis/</loc>
 		<lastmod>2026-11-19T22:29:37+00:00</lastmod>
 	</url>
 	<url>
-		<loc>https://patrykwajs.github.io/taxidiotis-preview/hey-ai-taxidiotis/</loc>
+		<loc>https://patrykwajs.github.io/taxidiotis-preview/pos-epilegoume-prosfores/</loc>
 		<lastmod>2026-11-19T22:29:37+00:00</lastmod>
 	</url>
 	<url>
@@ -661,15 +661,15 @@
 		<lastmod>2026-11-19T22:29:35+00:00</lastmod>
 	</url>
 	<url>
-		<loc>https://patrykwajs.github.io/taxidiotis-preview/taxidia-ameriki-okeania/</loc>
-		<lastmod>2026-11-19T22:29:26+00:00</lastmod>
-	</url>
-	<url>
 		<loc>https://patrykwajs.github.io/taxidiotis-preview/taxidia-afriki-mesi-anatoli/</loc>
 		<lastmod>2026-11-19T22:29:26+00:00</lastmod>
 	</url>
 	<url>
 		<loc>https://patrykwajs.github.io/taxidiotis-preview/taxidia-asia/</loc>
+		<lastmod>2026-11-19T22:29:26+00:00</lastmod>
+	</url>
+	<url>
+		<loc>https://patrykwajs.github.io/taxidiotis-preview/taxidia-ameriki-okeania/</loc>
 		<lastmod>2026-11-19T22:29:26+00:00</lastmod>
 	</url>
 	<url>
@@ -737,11 +737,11 @@
 		<lastmod>2026-11-19T22:18:46+00:00</lastmod>
 	</url>
 	<url>
-		<loc>https://patrykwajs.github.io/taxidiotis-preview/last-minute-ti-simainei/</loc>
+		<loc>https://patrykwajs.github.io/taxidiotis-preview/early-booking-ti-simainei/</loc>
 		<lastmod>2026-11-19T22:18:45+00:00</lastmod>
 	</url>
 	<url>
-		<loc>https://patrykwajs.github.io/taxidiotis-preview/early-booking-ti-simainei/</loc>
+		<loc>https://patrykwajs.github.io/taxidiotis-preview/last-minute-ti-simainei/</loc>
 		<lastmod>2026-11-19T22:18:45+00:00</lastmod>
 	</url>
 	<url>
