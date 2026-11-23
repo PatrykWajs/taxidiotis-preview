@@ -43,6 +43,7 @@
 	 'ο η οι τι ποιο ποια ποιος ποιες πως πώς που πού ποτε πότε θα δεν μη μην αν ή η κι ως ειναι εχει έχει εχω έχω μου σας ' +
 	 'μας τους ειμαι είμαι θελω θέλω μπορω μπορώ μπορει μπορεί ποσο πόσο κανει κάνει υπαρχει υπάρχει ολα όλα λιγο λίγο ' +
 	 'βάλω βάζω πάρω παίρνω φέρω κλείσω δω δούμε πάω πάμε πας πάει πήγαινα πηγαίνω ταξιδέψω επισκεφθώ επισκεφτώ κάνω κάνουμε έχουμε είμαστε μας μου καλά καλή ' +
+	 'έχουν εχουν έχετε εχετε υπάρχουν υπαρχουν είστε ειστε ' +
 	 'the and for to of in a an is what how when where').split(' ').forEach(function (w) { STOP[canon(w)] = 1; });
 	function stem(w) { return w.length > 4 ? w.slice(0, Math.max(4, w.length - 2)) : w; }
 
@@ -118,9 +119,25 @@
 			OI = new Index(OD.map(function (o) { return [[o.t, 3], [o.d || '', 2], [o.l || '', 2], [o.g || '', 1]]; }));
 		});
 	}
+	// a query word matches an offer word only as the same word with another Greek ending («Κρήτη» = «Κρήτης»), never as the
+	// start of another word («Κρήτη» ≠ «Kritsa»: a Pilio hotel was offered for Crete in the 2026-11-23 hard test)
+	var ENDS = { '': 1, 'α': 1, 'ασ': 1, 'ε': 1, 'εσ': 1, 'ι': 1, 'ισ': 1, 'ιν': 1, 'ια': 1, 'ιο': 1, 'ιοσ': 1, 'ιον': 1, 'ιεσ': 1, 'ιδα': 1, 'ιδεσ': 1, 'ο': 1, 'οσ': 1, 'ον': 1, 'u': 1, 'uσ': 1, 'σ': 1 };
+	function sameWord(w, x) {
+		if (x === w) { return true; }
+		var st = w.slice(0, Math.max(3, w.length - 3));
+		for (var k = w.length; k >= st.length; k--) {
+			var base = w.slice(0, k);
+			if (x.lastIndexOf(base, 0) === 0 && ENDS[w.slice(k)] && ENDS[x.slice(k)]) { return true; }
+		}
+		return false;
+	}
+	function offerHas(o, q) {
+		var words = toks([o.t, o.d, o.l, o.g].join(' '));
+		return toks(q).filter(function (w) { return !STOP[w]; }).every(function (w) { return words.some(function (x) { return sameWord(w, x); }); });
+	}
 	function findOffers(q, max, cheap) {  // every word must match; «cheap» questions get the lowest prices first
 		if (!OI) { return []; }
-		var hits = OI.search(q).filter(function (r) { return r.cov >= 0.99; }).slice(0, cheap ? 60 : max).map(function (r) { return OD[r.d]; });
+		var hits = OI.search(q).filter(function (r) { return r.cov >= 0.99 && offerHas(OD[r.d], q); }).slice(0, cheap ? 60 : max).map(function (r) { return OD[r.d]; });
 		if (cheap) { hits.sort(function (a, b) { return (a.pr || 1e9) - (b.pr || 1e9); }); }
 		return hits.slice(0, max);
 	}
@@ -277,10 +294,15 @@
 			say('<p>Μπορείτε να μας γράψετε από τη <a href="' + esc(href('/epikoinonia/')) + '">σελίδα επικοινωνίας</a>.</p>' + extra); return;
 		}
 		var here = location.pathname.replace(HOME.replace(/^https?:\/\/[^/]+/, ''), '') || '/';
-		// question words that carry meaning but are stop words: «πότε» asks for the season, «πόσες μέρες» for the length
-		// question words that carry meaning but are stop words: «πότε» asks for the season, «πόσες μέρες» for the length
+		// question words that carry meaning but are stop words: «πότε» asks for the season, «πόσες μέρες» for the length.
+		// The hint words only help the ranking: when they make the question fail («Πότε είναι το Πάσχα 2027;», «Πότε ξεκινά
+		// το ETIAS;»), the question is tried again without them (2026-11-23 hard test)
 		function retrieve(text) {
-			var qq = text + (has(text, ['πότε', 'ποτε']) ? ' εποχή' : '') + (has(text, ['μέρες', 'ημέρες', 'διανυκτερεύσεις']) && has(text, ['πόσες', 'ποσες']) ? ' ημέρες' : '');
+			var hint = (has(text, ['πότε', 'ποτε']) ? ' εποχή' : '') + (has(text, ['μέρες', 'ημέρες', 'διανυκτερεύσεις']) && has(text, ['πόσες', 'ποσες']) ? ' ημέρες' : '');
+			var A = retrieve1(text + hint, text);
+			return A.ok || !hint ? A : retrieve1(text, text);
+		}
+		function retrieve1(qq, text) {
 			var qtok = toks(qq).filter(function (w) { return !STOP[w]; });
 			var list = CI.search(qq).slice(0, 60).map(function (r) {
 				var c = CD.chunks[r.d], pg = CD.pages[c.n] || {};
@@ -310,7 +332,12 @@
 			return '<li><a href="' + esc(href(o.u)) + '">' + esc(o.t) + '</a>: ' + esc(o.d + chk()) + '</li>'; }).join('') + '</ul><p class="txa-src">Τελική τιμή και όροι στη σελίδα του συνεργάτη.</p>' : '';
 		if (!R.ok) {
 			var pages = tq.length ? SI.search(q).filter(function (r) { return r.cov >= 0.99; }).slice(0, 3).map(function (r) { return SD[r.d]; }) : [];
-			if (lead) { say(lead + '<p class="txa-src">Δείτε και τις σελίδες μας:</p><ul>' + (tq.length ? findPages(q, 3) : []).map(function (p) { return '<li><a href="' + esc(href(p.u)) + '">' + esc(p.t) + '</a></li>'; }).join('') + '</ul>' + extra); return; }
+			var lp = tq.length ? findPages(q, 3) : [];
+			if (lead) { say(lead + (lp.length ? '<p class="txa-src">Δείτε και τις σελίδες μας:</p><ul>' + lp.map(function (p) { return '<li><a href="' + esc(href(p.u)) + '">' + esc(p.t) + '</a></li>'; }).join('') + '</ul>' : '') + extra); return; }
+			if (!/[α-ωά-ώ]/i.test(q) && /\b(the|what|when|where|how|which|is|are|can|do|does|cheap|hotel|hotels|best|visit|trip|holiday|holidays)\b/i.test(q)) {
+				say('<p>Ο βοηθός απαντά σε ερωτήσεις στα ελληνικά, για παράδειγμα «Πότε να πάω στην Κρήτη;».</p>' +
+					'<p lang="en">The assistant answers questions in Greek. Try for example «Πότε να πάω στην Κρήτη;» (When should I go to Crete?).</p>'); return;
+			}
 			say('<p>Δεν βρήκα σαφή απάντηση σε αυτό στις σελίδες μας.' + (pages.length ? ' Ίσως σας βοηθήσουν:' : ' Δοκιμάστε με έναν προορισμό, μια γιορτή ή ένα είδος ταξιδιού.') + '</p>' +
 				(pages.length ? '<ul>' + pages.map(function (p) { return '<li><a href="' + esc(href(p.u)) + '">' + esc(p.t) + '</a></li>'; }).join('') + '</ul>' : '') +
 				'<p>Για κάτι άλλο, γράψτε μας από τη <a href="' + esc(href('/epikoinonia/')) + '">σελίδα επικοινωνίας</a>.</p>' + extra);
@@ -332,22 +359,32 @@
 		var wait = say('<p class="txa-dots">Γράφω την απάντηση από τις σελίδες μας…</p>');
 		var ctl = window.AbortController ? new AbortController() : null, timer = setTimeout(function () { if (ctl) { ctl.abort(); } }, 20000);
 		fetch(C.rag, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({
-			q: q, ids: ids, offers: offs.map(function (o) { return o.u; }), history: HIST.slice(-2), page: here }), signal: ctl ? ctl.signal : undefined })
+			q: q, ids: ids, v: CD.v || '', offers: offs.map(function (o) { return o.u; }), history: HIST.slice(-2), page: here }), signal: ctl ? ctl.signal : undefined })
 			.then(function (r) { return r.json(); })
 			.then(function (j) {
 				clearTimeout(timer); wait.remove();
 				if (!j || !j.answer) { extractive(); return; }
-				var src = {};
+				var src = {}, renum = {}, k = 0;
 				(j.sources || []).forEach(function (x) { src[x.n] = x; });
+				// the reader sees 1, 2, 3 in the order of the answer, not the Worker's numbers (offers came as 7, 8, 9)
+				(j.answer.match(/\[(\d+)\]/g) || []).forEach(function (m) { var n = +m.slice(1, -1); if (src[n] && !renum[n]) { renum[n] = ++k; } });
 				var html = esc(j.answer).replace(/\n+/g, '</p><p>').replace(/\[(\d+)\]/g, function (m, n) {
-					var x = src[n]; return x ? '<a class="txa-cite" href="' + esc(href(x.url)) + '" title="' + esc(x.title) + '">' + n + '</a>' : '';
+					var x = src[n]; return x ? '<a class="txa-cite" href="' + esc(href(x.url)) + '" title="' + esc(x.title) + '">' + renum[n] + '</a>' : '';
 				});
-				var used = (j.sources || []).filter(function (x) { return new RegExp('\\[' + x.n + '\\]').test(j.answer); });
+				var used = (j.sources || []).filter(function (x) { return renum[x.n]; }).sort(function (a, b) { return renum[a.n] - renum[b.n]; })
+					.map(function (x) { return { n: renum[x.n], url: x.url, title: x.title }; });
+				if (!used.length) {  // the model found no answer in the sources: still show the closest pages
+					// the page search weights titles and places, so «Μύκονος» finds the Cyclades page, not a Cyprus passage
+					(findPages(q, 3).length ? findPages(q, 3) : SI.search(q).filter(function (r) { return r.cov >= 0.2; }).slice(0, 3).map(function (r) { return SD[r.d]; }))
+						.forEach(function (p) { used.push({ n: used.length + 1, url: p.u, title: p.t, plain: 1 }); });
+				}
 				// one entry per page: several passages of one page read «1, 3. Title» (2026-11-23)
 				var byUrl = [], seenUrl = {};
 				used.forEach(function (x) { if (seenUrl[x.url]) { seenUrl[x.url].ns.push(x.n); } else { seenUrl[x.url] = { x: x, ns: [x.n] }; byUrl.push(seenUrl[x.url]); } });
-				say('<p>' + html + '</p>' + (byUrl.length ? '<p class="txa-src">Πηγές: ' + byUrl.map(function (g) {
-					return '<a href="' + esc(href(g.x.url)) + '">' + g.ns.join(', ') + '. ' + esc(g.x.title) + '</a>'; }).join(' · ') + '</p>' : '') + extra);
+				var plain = used.length && used[0].plain;
+				var citedOffer = (j.sources || []).some(function (x) { return x.kind === 'offer' && renum[x.n]; });
+				say('<p>' + html + '</p>' + (byUrl.length ? '<p class="txa-src">' + (plain ? 'Σχετικές σελίδες: ' : 'Πηγές: ') + byUrl.map(function (g) {
+					return '<a href="' + esc(href(g.x.url)) + '">' + (plain ? '' : g.ns.join(', ') + '. ') + esc(g.x.title) + '</a>'; }).join(' · ') + '</p>' : '') + (citedOffer ? '<p class="txa-src">Τιμές «από» του ελέγχου' + esc(chk().replace(' · έλεγχος', ' της')) + '.' + (extra ? '' : ' Η τελική τιμή και οι όροι είναι στη σελίδα του συνεργάτη.') + '</p>' : lead) + extra);
 				HIST.push({ q: q, a: j.answer.slice(0, 500) });
 				if (HIST.length > 4) { HIST.shift(); }
 			})
