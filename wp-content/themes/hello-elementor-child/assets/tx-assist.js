@@ -352,7 +352,12 @@
 	}
 
 	/* ---------- wiring ---------- */
+	function hideExpired() { // dated partner promotions on the static preview (the live site removes them in PHP)
+		var today = new Date().toISOString().slice(0, 10);
+		document.querySelectorAll('[data-tx-until]').forEach(function (e) { if (e.getAttribute('data-tx-until') < today) { e.style.display = 'none'; } });
+	}
 	function init() {
+		hideExpired();
 		document.addEventListener('click', function (e) {
 			var a = e.target.closest && e.target.closest('.tx-search-open a, a.tx-search-open, a[href$="#anazitisi"]');
 			if (a) { e.preventDefault(); openSearch(); }
