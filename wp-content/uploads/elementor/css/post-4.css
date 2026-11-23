@@ -384,6 +384,30 @@ html body .txa-note { font-size:11.5px; color:#4a5568; margin:0; padding:0 12px 
 @media (max-width:767px) { .tx-hero-compact h1.elementor-heading-title { font-size:30px; } .tx-hero-compact .tx-lead p { font-size:16px; }
   .tx-offers-top .tx-ocards { display:flex; } .tx-offers-top .tx-offers-h { font-size:25px; }
   .tx-offers-nav { flex-wrap:nowrap; overflow-x:auto; padding-bottom:8px; } .tx-offers-nav a { flex:0 0 auto; } }
+/* 2026-11-23: booking cards (pages without feed offers) and hub photo cards above the fold */
+.tx-bookgrid.e-con, .tx-hubgrid.e-con { display:grid !important; grid-template-columns:repeat(3, minmax(0,1fr)); gap:18px; padding:0; }
+.tx-bookgrid > .e-con, .tx-hubgrid > .e-con { width:auto !important; max-width:none; }
+.tx-book { background:#fff; border:1px solid var(--tx-aegean-20); border-radius:14px; }
+.tx-book .elementor-icon { font-size:26px; }
+.tx-book .elementor-icon-wrapper { text-align:left; }
+.tx-book .tx-eyebrow p, .tx-book .tx-eyebrow .elementor-heading-title { margin:0; }
+.tx-book-h .elementor-heading-title { font-family:'Commissioner',sans-serif !important; font-size:19px !important; font-weight:600; margin:0; }
+.tx-book-p p { font-size:14.5px; line-height:1.5; margin:0; color:var(--tx-ink); }
+.tx-book .tx-book-btn { margin-top:auto; }
+.tx-book .tx-book-btn .elementor-button { width:100%; white-space:normal; padding:12px 14px; }
+.tx-hubcard { overflow:hidden; }
+.tx-hubcard-img img { display:block; width:100%; height:auto; aspect-ratio:3/2; object-fit:cover; background:var(--tx-sand); }
+.tx-hubcard-h, .tx-hubcard .tx-ocount-w, .tx-hubcard-k { padding:0 16px; }
+.tx-hubcard .tx-hubcard-h .elementor-heading-title { font-size:19px !important; margin:6px 0 0; }
+.tx-hubcard-k p { font-size:13.5px !important; color:#4a5670; }
+.tx-hubtop-intro p { margin:0; max-width:900px; }
+.tx-hubgrid.e-con { grid-template-columns:repeat(4, minmax(0,1fr)); }
+@media (max-width:1024px) { .tx-bookgrid.e-con, .tx-hubgrid.e-con { grid-template-columns:repeat(2, minmax(0,1fr)); } }
+@media (max-width:767px) { .tx-bookgrid.e-con { display:flex !important; flex-direction:row !important; overflow-x:auto; gap:12px; scroll-snap-type:x mandatory; padding:2px 2px 12px; }
+  .tx-bookgrid > .e-con { flex:0 0 80% !important; scroll-snap-align:start; }
+  .tx-hubgrid.e-con { grid-template-columns:repeat(2, minmax(0,1fr)); gap:12px; }
+  .tx-hubcard .tx-hubcard-h .elementor-heading-title { font-size:16px !important; } .tx-hubcard-h, .tx-hubcard .tx-ocount-w, .tx-hubcard-k { padding:0 10px; }
+  .tx-hubcard-k p { font-size:12.5px !important; } }
 .tx-pagehero.tx-hero-compact { min-height:230px !important; }
 @media (max-width:767px) { .tx-pagehero.tx-hero-compact { min-height:190px !important; } }
 /* tighter space above the offer cards (2026-11-23) */
