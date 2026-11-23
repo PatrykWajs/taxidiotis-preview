@@ -208,7 +208,7 @@
 	}
 
 	/* ---------- chat ---------- */
-	var cbox, clog, cinput, cbtn;
+	var cbox, clog, cinput, cbtn, HIST = [];  // last turns of this chat, for follow-up questions (never stored)
 	var SUGGEST = ['Πότε να πάω στη Σαντορίνη;', 'Τι έγγραφα χρειάζομαι για ταξίδι στο εξωτερικό;', 'Πακέτα για το Πάσχα', 'Τι σημαίνει all inclusive;'];
 	function buildChat() {
 		cbtn = el('button', { type: 'button', 'class': 'txa-fab', 'aria-expanded': 'false', 'aria-controls': 'txa-chat' },
@@ -218,7 +218,7 @@
 			'<div class="txa-log" aria-live="polite"></div>' +
 			'<form class="txa-cform"><label for="txa-m" class="txa-sr">Η ερώτησή σας</label><input id="txa-m" type="text" autocomplete="off" placeholder="Γράψτε την ερώτησή σας" maxlength="200">' +
 			'<button type="submit">Αποστολή</button></form>' +
-			'<p class="txa-note">Οι απαντήσεις προέρχονται από τις σελίδες του Ταξιδιώτη. Δεν αποθηκεύουμε τις ερωτήσεις.</p>';
+			'<p class="txa-note">' + (C.rag ? 'Οι απαντήσεις γράφονται αυτόματα μόνο από τις σελίδες του Ταξιδιώτη και μπορεί να έχουν λάθη: ελέγξτε τις πηγές. ' : 'Οι απαντήσεις προέρχονται από τις σελίδες του Ταξιδιώτη. ') + 'Δεν αποθηκεύουμε τις ερωτήσεις.</p>';
 		document.body.appendChild(cbtn); document.body.appendChild(cbox);
 		clog = cbox.querySelector('.txa-log'); cinput = cbox.querySelector('input');
 		cbtn.addEventListener('click', function () { cbox.hidden ? openChat() : closeChat(); });
@@ -278,22 +278,37 @@
 		}
 		var here = location.pathname.replace(HOME.replace(/^https?:\/\/[^/]+/, ''), '') || '/';
 		// question words that carry meaning but are stop words: «πότε» asks for the season, «πόσες μέρες» for the length
-		var qq = q + (has(q, ['πότε', 'ποτε']) ? ' εποχή' : '') + (has(q, ['μέρες', 'ημέρες', 'διανυκτερεύσεις']) && has(q, ['πόσες', 'ποσες']) ? ' ημέρες' : '');
-		var qtok = toks(qq).filter(function (w) { return !STOP[w]; });
-		var res = CI.search(qq).slice(0, 60).map(function (r) {
-			var c = CD.chunks[r.d], pg = CD.pages[c.n] || {};
-			// a page whose title holds the question's words is the better source (family question -> the family page)
-			var tt = toks(pg.t || ''), tc = qtok.length ? qtok.filter(function (w) { var st = stem(w); return tt.some(function (x) { return x.lastIndexOf(st, 0) === 0; }); }).length / qtok.length : 0;
-			return { c: c, pg: pg, s: r.s * (pg.u === here ? 1.25 : 1) * (c.q ? 1.15 : 1) * (1 + 0.6 * tc), cov: r.cov };
-		}).sort(function (a, b) { return b.s - a.s; });
+		// question words that carry meaning but are stop words: «πότε» asks for the season, «πόσες μέρες» for the length
+		function retrieve(text) {
+			var qq = text + (has(text, ['πότε', 'ποτε']) ? ' εποχή' : '') + (has(text, ['μέρες', 'ημέρες', 'διανυκτερεύσεις']) && has(text, ['πόσες', 'ποσες']) ? ' ημέρες' : '');
+			var qtok = toks(qq).filter(function (w) { return !STOP[w]; });
+			var list = CI.search(qq).slice(0, 60).map(function (r) {
+				var c = CD.chunks[r.d], pg = CD.pages[c.n] || {};
+				// a page whose title holds the question's words is the better source (family question -> the family page)
+				var tt = toks(pg.t || ''), tc = qtok.length ? qtok.filter(function (w) { var st = stem(w); return tt.some(function (x) { return x.lastIndexOf(st, 0) === 0; }); }).length / qtok.length : 0;
+				return { d: r.d, c: c, pg: pg, s: r.s * (pg.u === here ? 1.25 : 1) * (c.q ? 1.15 : 1) * (1 + 0.6 * tc), cov: r.cov };
+			}).sort(function (a, b) { return b.s - a.s; });
+			var n = toks(text).filter(function (w) { return !STOP[w]; }).length;
+			var need = n <= 2 ? 1 : n === 3 ? 0.66 : 0.6;  // every word of a short question must be found
+			return { res: list, need: need, ok: !!(list[0] && list[0].cov >= need && list[0].s >= 4) };
+		}
+		// follow-ups: «και για παιδιά;» / «τι γίνεται με…» try the previous question's topic first; any other short question
+		// that finds nothing alone gets one retry with that topic
+		var prev = HIST.length ? HIST[HIST.length - 1].q : '';
+		var looksFollow = prev && tq.length <= 3 && /^(και|κι|ενώ|τι γίνεται|τι γινεται|κι αν|και αν|αν|μήπως)\s/i.test(q.trim());
+		var R = looksFollow ? retrieve(prev + ' ' + q) : retrieve(q);
+		if (!R.ok && prev && tq.length <= 3) {
+			var R2 = looksFollow ? retrieve(q) : retrieve(prev + ' ' + q);
+			if (R2.ok) { R = R2; }
+		}
+		var res = R.res;
 		var top = res[0];
 		var cheap = /φθιν|οικονομ|χαμηλ/.test(toks(q).join(' '));
 		var offs = /προσφορ|τιμ|κοστ|φθιν|ξενοδοχ|κλισ|διανικτ|πακετ|διαμον/.test(toks(q).join(' '))
 			? findOffers(q.replace(/προσφορ\S*|τιμ\S*|κόστ\S*|κοστ\S*|φθην\S*|οικονομ\S*|ξενοδοχ\S*|πακέτ\S*|πακετ\S*|διακοπ\S*|ταξίδ\S*|ταξιδ\S*|διαμον\S*|πόσο|θέλω|ψάχνω/gi, ''), 3, cheap) : [];
 		var lead = offs.length ? '<p class="txa-q">Προσφορές συνεργατών τώρα' + (cheap ? ', από τη χαμηλότερη τιμή' : '') + '</p><ul>' + offs.map(function (o) {
 			return '<li><a href="' + esc(href(o.u)) + '">' + esc(o.t) + '</a>: ' + esc(o.d + chk()) + '</li>'; }).join('') + '</ul><p class="txa-src">Τελική τιμή και όροι στη σελίδα του συνεργάτη.</p>' : '';
-		var need = tq.length <= 2 ? 1 : tq.length === 3 ? 0.66 : 0.6;  // every word of a short question must be found
-		if (!top || top.cov < need || top.s < 4) {
+		if (!R.ok) {
 			var pages = tq.length ? SI.search(q).filter(function (r) { return r.cov >= 0.99; }).slice(0, 3).map(function (r) { return SD[r.d]; }) : [];
 			if (lead) { say(lead + '<p class="txa-src">Δείτε και τις σελίδες μας:</p><ul>' + (tq.length ? findPages(q, 3) : []).map(function (p) { return '<li><a href="' + esc(href(p.u)) + '">' + esc(p.t) + '</a></li>'; }).join('') + '</ul>' + extra); return; }
 			say('<p>Δεν βρήκα σαφή απάντηση σε αυτό στις σελίδες μας.' + (pages.length ? ' Ίσως σας βοηθήσουν:' : ' Δοκιμάστε με έναν προορισμό, μια γιορτή ή ένα είδος ταξιδιού.') + '</p>' +
@@ -301,12 +316,39 @@
 				'<p>Για κάτι άλλο, γράψτε μας από τη <a href="' + esc(href('/epikoinonia/')) + '">σελίδα επικοινωνίας</a>.</p>' + extra);
 			return;
 		}
-		var body = top.c.q ? top.c.x : sentences(top.c.x, q);
-		var more = [], seenU = {}; seenU[top.pg.u] = 1;
-		res.slice(1).forEach(function (r) { if (more.length < 2 && !seenU[r.pg.u] && r.cov >= 0.5 && r.s > top.s * 0.55) { seenU[r.pg.u] = 1; more.push(r.pg); } });
-		say(lead + (top.c.q ? '<p class="txa-q">' + esc(top.c.q) + '</p>' : '') + '<p>' + mark(body, q) + '</p>' +
-			'<p class="txa-src">Πηγή: <a href="' + esc(href(top.pg.u)) + '">' + esc(top.pg.t) + '</a></p>' +
-			(more.length ? '<p class="txa-src">Δείτε επίσης: ' + more.map(function (p) { return '<a href="' + esc(href(p.u)) + '">' + esc(p.t) + '</a>'; }).join(' · ') + '</p>' : '') + extra);
+		function extractive() {  // quoting answer: always available, also the fallback when the RAG endpoint fails
+			var body = top.c.q ? top.c.x : sentences(top.c.x, q);
+			var more = [], seenU = {}; seenU[top.pg.u] = 1;
+			res.slice(1).forEach(function (r) { if (more.length < 2 && !seenU[r.pg.u] && r.cov >= 0.5 && r.s > top.s * 0.55) { seenU[r.pg.u] = 1; more.push(r.pg); } });
+			say(lead + (top.c.q ? '<p class="txa-q">' + esc(top.c.q) + '</p>' : '') + '<p>' + mark(body, q) + '</p>' +
+				'<p class="txa-src">Πηγή: <a href="' + esc(href(top.pg.u)) + '">' + esc(top.pg.t) + '</a></p>' +
+				(more.length ? '<p class="txa-src">Δείτε επίσης: ' + more.map(function (p) { return '<a href="' + esc(href(p.u)) + '">' + esc(p.t) + '</a>'; }).join(' · ') + '</p>' : '') + extra);
+			HIST.push({ q: q, a: body.slice(0, 500) });
+		}
+		if (!C.rag || !window.fetch) { extractive(); return; }
+		// RAG: the endpoint writes the answer from these passages only (ids into chat.json) and the matching offers
+		var ids = [], pagesUsed = {};
+		res.forEach(function (r) { if (ids.length < 6 && r.cov >= 0.5 && (pagesUsed[r.pg.u] || 0) < 3) { ids.push(r.d); pagesUsed[r.pg.u] = (pagesUsed[r.pg.u] || 0) + 1; } });
+		var wait = say('<p class="txa-dots">Γράφω την απάντηση από τις σελίδες μας…</p>');
+		var ctl = window.AbortController ? new AbortController() : null, timer = setTimeout(function () { if (ctl) { ctl.abort(); } }, 20000);
+		fetch(C.rag, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({
+			q: q, ids: ids, offers: offs.map(function (o) { return o.u; }), history: HIST.slice(-2), page: here }), signal: ctl ? ctl.signal : undefined })
+			.then(function (r) { return r.json(); })
+			.then(function (j) {
+				clearTimeout(timer); wait.remove();
+				if (!j || !j.answer) { extractive(); return; }
+				var src = {};
+				(j.sources || []).forEach(function (x) { src[x.n] = x; });
+				var html = esc(j.answer).replace(/\n+/g, '</p><p>').replace(/\[(\d+)\]/g, function (m, n) {
+					var x = src[n]; return x ? '<a class="txa-cite" href="' + esc(href(x.url)) + '" title="' + esc(x.title) + '">' + n + '</a>' : '';
+				});
+				var used = (j.sources || []).filter(function (x) { return new RegExp('\\[' + x.n + '\\]').test(j.answer); });
+				say('<p>' + html + '</p>' + (used.length ? '<p class="txa-src">Πηγές: ' + used.map(function (x) {
+					return '<a href="' + esc(href(x.url)) + '">' + x.n + '. ' + esc(x.title) + '</a>'; }).join(' · ') + '</p>' : '') + extra);
+				HIST.push({ q: q, a: j.answer.slice(0, 500) });
+				if (HIST.length > 4) { HIST.shift(); }
+			})
+			.catch(function () { clearTimeout(timer); wait.remove(); extractive(); });
 	}
 
 	/* ---------- wiring ---------- */

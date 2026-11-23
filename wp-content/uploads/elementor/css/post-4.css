@@ -369,4 +369,45 @@ html body .txa-cform button { background:var(--tx-terra); color:#fff; border:0; 
 html body .txa-note { font-size:11.5px; color:#4a5568; margin:0; padding:0 12px 10px; background:#fff; }
 @media (max-width:767px) { html body .txa-fab { right:12px; bottom:12px; padding:12px; font-size:0; gap:0; } .txa-fab span { width:30px; height:30px; font-size:17px; }
   .txa-chat { right:8px; left:8px; bottom:72px; width:auto; max-width:none; height:auto; top:70px; max-height:none; }
-  .txa-overlay { padding:12px 10px; } .txa-search { max-height:94vh; } }/* End custom CSS */
+  .txa-overlay { padding:12px 10px; } .txa-search { max-height:94vh; } }
+/* offer-page layout last, so it wins over the base hero and chip rules above (2026-11-23) */
+/* 2026-11-23: offers above the fold: compact hero + offer block right under it */
+.tx-hero-compact h1.elementor-heading-title { font-size:46px; }
+.tx-hero-compact .tx-lead p { font-size:18px; line-height:1.5; }
+.tx-offers-top { background:#fff; }
+.tx-lead-band p { font-size:21px; margin:0; max-width:900px; }
+@media (max-width:767px) { .tx-hero-compact .rank-math-breadcrumb, .tx-hero-compact .rank-math-breadcrumb a { font-size:12.5px !important; line-height:1.5; }
+  .tx-notice p { font-size:13px; } .tx-lead-band p { font-size:18px; } }
+.tx-offers-top .tx-offers-h { font-size:30px; margin-bottom:6px; }
+.tx-offers-top .tx-ocards { grid-template-columns:repeat(3, minmax(0,1fr)); }
+@media (max-width:1024px) { .tx-offers-top .tx-ocards { grid-template-columns:repeat(2, minmax(0,1fr)); } .tx-hero-compact h1.elementor-heading-title { font-size:40px; } }
+@media (max-width:767px) { .tx-hero-compact h1.elementor-heading-title { font-size:30px; } .tx-hero-compact .tx-lead p { font-size:16px; }
+  .tx-offers-top .tx-ocards { display:flex; } .tx-offers-top .tx-offers-h { font-size:25px; }
+  .tx-offers-nav { flex-wrap:nowrap; overflow-x:auto; padding-bottom:8px; } .tx-offers-nav a { flex:0 0 auto; } }
+.tx-pagehero.tx-hero-compact { min-height:230px !important; }
+@media (max-width:767px) { .tx-pagehero.tx-hero-compact { min-height:190px !important; } }
+/* tighter space above the offer cards (2026-11-23) */
+.tx-topbar .elementor-nav-menu { flex-wrap:nowrap !important; }
+.tx-topbar .elementor-nav-menu a { padding:6px 10px !important; white-space:nowrap; }
+.tx-pagehero.tx-hero-compact { padding-top:34px !important; padding-bottom:20px !important; }
+.tx-hero-compact .tx-eyebrow { margin-top:-4px; }
+.tx-offers-top { padding-top:14px !important; padding-bottom:22px !important; }
+.tx-offers-top .tx-offers-h { margin:0 0 2px; }
+.tx-offers-top .tx-offers-intro { font-size:13.5px; margin:0 0 12px; color:#4a5568; }
+@media (max-width:767px) { .tx-pagehero.tx-hero-compact { padding-top:22px !important; padding-bottom:16px !important; }
+  .tx-hero-compact h1.elementor-heading-title { font-size:27px !important; line-height:1.15; }
+  .tx-sep-b { padding-top:10px !important; padding-bottom:10px !important; } .tx-notice p { font-size:12.5px !important; line-height:1.45; }
+  .tx-offers-top .tx-offers-intro { font-size:12.5px; } }
+.e-con.tx-topbar .e-con { padding-top:0 !important; padding-bottom:0 !important; }
+.e-con.tx-topbar .tx-topbar p { margin:0 !important; }
+.tx-pagehero.tx-hero-compact > .e-con-inner { padding-top:0 !important; padding-bottom:0 !important; gap:8px !important; row-gap:8px !important; }
+@media (min-width:768px) { .tx-hero-compact h1.elementor-heading-title { font-size:42px !important; line-height:1.15; } }
+.tx-offers-top .tx-notice-in p { font-size:12.5px !important; line-height:1.45; color:#4a5568; margin:0; }
+.tx-offers-top > .e-con-inner { gap:6px !important; }
+@media (max-width:767px) { .tx-offers-top .tx-offers-h { font-size:22px !important; line-height:1.2; } }
+.tx-offers-nav { flex-wrap:nowrap !important; overflow-x:auto; padding-bottom:8px; margin-bottom:14px !important; scrollbar-width:thin; }
+.tx-offers-nav a { flex:0 0 auto; }
+.tx-offers-top .tx-offers-block:first-of-type { border-top:0; margin-top:0; padding-top:4px; }
+html body .txa-cite { display:inline-flex; align-items:center; justify-content:center; min-width:18px; height:18px; padding:0 4px; margin:0 1px;
+  border-radius:9px; background:var(--tx-aegean); color:#fff !important; font-size:11px; font-weight:700; text-decoration:none !important; vertical-align:2px; }
+html body .txa-cite:hover { background:var(--tx-terra); }/* End custom CSS */
