@@ -411,4 +411,53 @@ html body .txa-note { font-size:11.5px; color:#4a5568; margin:0; padding:0 12px 
 html body .txa-cite { display:inline-flex; align-items:center; justify-content:center; min-width:18px; height:18px; padding:0 4px; margin:0 1px;
   border-radius:9px; background:var(--tx-aegean); color:#fff !important; font-size:11px; font-weight:700; text-decoration:none !important; vertical-align:2px; }
 html body .txa-cite:hover { background:var(--tx-terra); }
-.tx-promo p { background:#fff7e8; border-left:4px solid var(--tx-terra); border-radius:8px; padding:10px 14px; margin:0; font-size:15px; line-height:1.5; color:var(--tx-ink); }/* End custom CSS */
+.tx-promo p { background:#fff7e8; border-left:4px solid var(--tx-terra); border-radius:8px; padding:10px 14px; margin:0; font-size:15px; line-height:1.5; color:var(--tx-ink); }
+/* offer tools + finder (2026-11-23, competitor gaps) */
+.tx-ocard { position:relative; }
+html body .tx-save { position:absolute; top:10px; right:10px; z-index:2; width:40px; height:40px; min-height:0; padding:0; border-radius:50%; border:0;
+  background:rgba(255,255,255,.94); color:var(--tx-ink); display:inline-flex; align-items:center; justify-content:center; box-shadow:0 2px 8px rgba(20,33,61,.25); cursor:pointer; }
+html body .tx-save svg path { fill:none; stroke:currentColor; stroke-width:2; }
+html body .tx-save[aria-pressed="true"] { color:var(--tx-terra); }
+html body .tx-save[aria-pressed="true"] svg path { fill:currentColor; }
+html body .tx-save:hover { color:var(--tx-terra); }
+.tx-sortbar { display:flex; flex-wrap:wrap; align-items:center; gap:8px; margin:0 0 14px; font-size:14px; color:#4a5568; }
+html body .tx-sortbar button, html body .tx-f-actions button, html body .tx-f-more, html body .tx-map-btn, html body .tx-share button { font-family:'Commissioner',sans-serif; font-size:14px; letter-spacing:normal;
+  text-transform:none; line-height:1.2; min-height:40px; padding:9px 16px; border-radius:40px; border:1px solid var(--tx-aegean); background:#fff; color:var(--tx-aegean); cursor:pointer; }
+html body .tx-sortbar button[aria-pressed="true"], html body .tx-f-mapbtn[aria-pressed="true"] { background:var(--tx-aegean); color:#fff; }
+html body .tx-sortbar button:hover, html body .tx-f-actions button:hover, html body .tx-f-more:hover, html body .tx-map-btn:hover, html body .tx-share button:hover { background:var(--tx-aegean); color:#fff; }
+.tx-insights { background:var(--tx-sand); border-radius:12px; padding:14px 18px; margin:16px 0 4px; font-size:15px; line-height:1.55; }
+.tx-insights-h { font-weight:700; margin:0 0 6px; } .tx-insights ul { margin:0 0 6px; padding-left:18px; } .tx-insights-src { margin:0; font-size:13px; color:#4a5568; }
+.tx-ocount { display:inline-block; margin-top:6px; font-size:13px; font-weight:700; color:var(--tx-terra); }
+.tx-share { display:flex; flex-wrap:wrap; align-items:center; gap:8px; margin-top:14px; font-size:14px; }
+.tx-share a { display:inline-flex; align-items:center; min-height:40px; padding:9px 16px; border-radius:40px; border:1px solid var(--tx-aegean); color:var(--tx-aegean) !important; text-decoration:none !important; }
+.tx-share a:hover { background:var(--tx-aegean); color:#fff !important; }
+html body .tx-share .tx-save { position:static; box-shadow:none; border:1px solid var(--tx-aegean); }
+.tx-offer-sticky { display:none; }
+@media (max-width:767px) {
+  .tx-offer-sticky { display:flex; position:fixed; left:0; right:0; bottom:0; z-index:9980; align-items:center; justify-content:space-between; gap:12px;
+    padding:10px 16px calc(10px + env(safe-area-inset-bottom)); background:#fff; border-top:1px solid var(--tx-aegean-20); box-shadow:0 -6px 18px -10px rgba(20,33,61,.45); }
+  .tx-offer-sticky-p { font-size:20px; font-weight:700; color:var(--tx-ink); } .tx-offer-sticky-p span { font-size:13px; font-weight:400; color:#4a5568; }
+  .tx-offer-sticky a { background:var(--tx-terra); color:#fff !important; border-radius:40px; padding:11px 16px; font-weight:700; font-size:14px; text-decoration:none !important; white-space:nowrap; }
+  body:has(.tx-offer-sticky) { padding-bottom:76px; }
+  html body:has(.tx-offer-sticky) .txa-fab { bottom:84px; }
+}
+.tx-map { background:var(--tx-sand); border-radius:12px; padding:16px; margin:8px 0 18px; }
+.tx-map-note { margin:8px 0 0; font-size:13px; color:#4a5568; }
+.tx-map-frame { width:100%; height:340px; border:0; border-radius:10px; display:block; }
+.tx-offer-faq details { border-bottom:1px solid var(--tx-aegean-20); padding:12px 0; }
+.tx-offer-faq summary { cursor:pointer; font-weight:700; color:var(--tx-ink); }
+.tx-offer-faq p { margin:8px 0 0; line-height:1.6; }
+.tx-finder { background:#fff; border:1px solid var(--tx-aegean-20); border-radius:16px; padding:22px; margin:0 0 26px; }
+.tx-f-form { display:grid; grid-template-columns:repeat(auto-fill,minmax(190px,1fr)); gap:12px 16px; align-items:end; }
+.tx-f-field label { display:block; font-size:13px; font-weight:700; margin:0 0 4px; color:var(--tx-ink); }
+.tx-f-field select { width:100%; min-height:44px; border:1px solid #6b7a90; border-radius:10px; padding:8px 10px; background:#fff; color:var(--tx-ink); font-size:15px; }
+.tx-f-check { display:flex; align-items:center; gap:8px; min-height:44px; } .tx-f-check label { margin:0; font-weight:400; font-size:15px; }
+.tx-f-check input { width:20px; height:20px; accent-color:var(--tx-terra); }
+.tx-f-actions { display:flex; flex-wrap:wrap; gap:8px; grid-column:1/-1; }
+.tx-f-note { font-size:13px; color:#4a5568; margin:14px 0 6px; line-height:1.5; }
+.tx-f-count { font-weight:700; margin:10px 0 14px; }
+.tx-f-results.tx-ocards { display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:18px; overflow:visible; }
+.tx-f-mapcanvas { height:460px; border-radius:12px; margin:0 0 16px; }
+.tx-f-morewrap { text-align:center; margin:18px 0 0; }
+@media (max-width:767px) { .tx-finder { padding:16px; } .tx-f-form { grid-template-columns:1fr 1fr; } .tx-f-mapcanvas { height:360px; }
+  .tx-f-results.tx-ocards { display:grid; grid-template-columns:1fr; } .tx-f-results .tx-ocard { flex:none; } }/* End custom CSS */

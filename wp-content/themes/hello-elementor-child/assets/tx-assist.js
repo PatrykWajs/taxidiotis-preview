@@ -391,6 +391,59 @@
 			.catch(function () { clearTimeout(timer); wait.remove(); extractive(); });
 	}
 
+	/* ---------- offer tools (2026-11-23): save heart, sort bar, copy link, map after a click ---------- */
+	function savedList() { try { return JSON.parse(localStorage.getItem('tx_saved') || '[]') || []; } catch (e) { return []; } }
+	function markSaved() {
+		var have = savedList().map(function (x) { return x.u; });
+		document.querySelectorAll('.tx-save[data-save]').forEach(function (b) { b.setAttribute('aria-pressed', have.indexOf(b.getAttribute('data-save')) > -1 ? 'true' : 'false'); });
+	}
+	function offerTools() {
+		markSaved();
+		document.addEventListener('click', function (e) {
+			var t = e.target && e.target.closest ? e.target : null;
+			if (!t) { return; }
+			var sv = t.closest('.tx-save[data-save]');
+			if (sv) {  // browser storage only: no account, nothing sent anywhere (privacy page § browser storage)
+				var u = sv.getAttribute('data-save'), list = savedList().filter(function (x) { return x.u !== u; });
+				if (sv.getAttribute('aria-pressed') !== 'true') { list.unshift({ u: u, t: sv.getAttribute('data-title') || '' }); }
+				try { localStorage.setItem('tx_saved', JSON.stringify(list.slice(0, 100))); } catch (err) { sv.title = 'Η αποθήκευση δεν είναι διαθέσιμη σε αυτόν τον browser'; return; }
+				markSaved();
+				try { document.dispatchEvent(new CustomEvent('tx-saved-change')); } catch (err) { /* old browser */ }
+				return;
+			}
+			var sb = t.closest('.tx-sortbar button[data-sort]');
+			if (sb) {  // sort every card of the section: the first ones stay in the grid, the rest go into «Δείτε άλλες»
+				var sec = sb.closest('.tx-offers'), grids = sec ? sec.querySelectorAll('.tx-ocards') : [];
+				if (!grids.length) { return; }
+				var first = grids[0], keep = first.children.length, cards = [].slice.call(sec.querySelectorAll('.tx-ocard'));
+				var by = sb.getAttribute('data-sort');
+				cards.sort(function (a, b) {
+					return by === 'price' ? (+a.getAttribute('data-price') || 1e9) - (+b.getAttribute('data-price') || 1e9) : (+b.getAttribute('data-bought') || 0) - (+a.getAttribute('data-bought') || 0);
+				});
+				cards.forEach(function (c, i) { (i < keep || grids.length < 2 ? first : grids[1]).appendChild(c); });
+				sb.parentNode.querySelectorAll('button').forEach(function (b) { b.setAttribute('aria-pressed', b === sb ? 'true' : 'false'); });
+				return;
+			}
+			var cp = t.closest('.tx-copy[data-url]');
+			if (cp) {
+				var done = function () { cp.textContent = 'Ο σύνδεσμος αντιγράφηκε'; };
+				if (navigator.share && /Mobi|Android/i.test(navigator.userAgent)) { navigator.share({ url: cp.getAttribute('data-url') }).catch(function () {}); return; }
+				if (navigator.clipboard) { navigator.clipboard.writeText(cp.getAttribute('data-url')).then(done, function () { window.prompt('Αντιγράψτε τον σύνδεσμο:', cp.getAttribute('data-url')); }); }
+				else { window.prompt('Αντιγράψτε τον σύνδεσμο:', cp.getAttribute('data-url')); }
+				return;
+			}
+			var mb = t.closest('.tx-map-btn');
+			if (mb) {  // OpenStreetMap embed, loaded only now
+				var box = mb.closest('.tx-map'), la = +box.getAttribute('data-lat'), lo = +box.getAttribute('data-lng');
+				if (!la || !lo) { return; }
+				var f = document.createElement('iframe');
+				f.src = 'https://www.openstreetmap.org/export/embed.html?bbox=' + (lo - 0.012) + ',' + (la - 0.007) + ',' + (lo + 0.012) + ',' + (la + 0.007) + '&layer=mapnik&marker=' + la + ',' + lo;
+				f.title = 'Χάρτης: θέση του καταλύματος'; f.loading = 'lazy'; f.className = 'tx-map-frame'; f.setAttribute('referrerpolicy', 'no-referrer');
+				mb.replaceWith(f);
+			}
+		});
+	}
+
 	/* ---------- wiring ---------- */
 	function hideExpired() { // dated partner promotions on the static preview (the live site removes them in PHP)
 		var today = new Date().toISOString().slice(0, 10);
@@ -398,6 +451,7 @@
 	}
 	function init() {
 		hideExpired();
+		offerTools();
 		document.addEventListener('click', function (e) {
 			var a = e.target.closest && e.target.closest('.tx-search-open a, a.tx-search-open, a[href$="#anazitisi"]');
 			if (a) { e.preventDefault(); openSearch(); }
